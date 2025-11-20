@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Agent Task Submittal Form</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				padding: 20px;
+			}
+			.container {
+				max-width: 600px;
+				margin: auto;
+				background-color: #fff;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			h1,
+			h2 {
+				text-align: center;
+			}
+			form {
+				margin-bottom: 30px;
+			}
+			input[type="text"],
+			textarea,
+			select {
+				width: 100%;
+				padding: 10px;
+				margin: 8px 0;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				box-sizing: border-box;
+			}
+			button {
+				background-color: #007acc;
+				color: white;
+				padding: 10px 16px;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: #005fa3;
+			}
+			#output {
+				margin-top: 20px;
+				padding: 10px;
+				background-color: #e7ffe7;
+				border: 1px solid #b3ffb3;
+				border-radius: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Agent Task Manager</h1>
+
+			<!-- Agent Creation Form -->
+			<h2>Create Agent</h2>
+			<form id="agentForm">
+				<input type="text" id="agentName" placeholder="Agent Name" required />
+				<input type="text" id="agentRole" placeholder="Role" required />
+				<input type="text" id="agentDomain" placeholder="Domain" required />
+				<button type="submit">Create Agent</button>
+			</form>
+
+			<!-- Task Creation Form -->
+			<h2>Create Task</h2>
+			<form id="taskForm">
+				<input type="text" id="taskTitle" placeholder="Task Title" required />
+				<textarea id="taskDescription" placeholder="Description" rows="4" required></textarea>
+				<select id="taskAccessLevel">
+					<option value="private">Private</option>
+					<option value="shared">Shared</option>
+				</select>
+				<button type="submit">Create Task</button>
+			</form>
+
+			<div id="output"></div>
+		</div>
+
+		<script>
+			// Configure your backend API endpoints here
+			// Change these if your backend runs on a different host/port
+			const API_AGENT_ENDPOINT = "https://openwebui.backend/api/agent";
+			const API_TASK_ENDPOINT = "https://openwebui.backend/api/task";
+
+			// Utility function to update the output display
+			function updateOutput(message) {
+				const outputDiv = document.getElementById("output");
+				outputDiv.innerText = message;
+			}
+
+			// Handle Agent form submission
+			document.getElementById("agentForm").addEventListener("submit", async function (e) {
+				e.preventDefault();
+				const agentData = {
+					name: document.getElementById("agentName").value.trim(),
+					role: document.getElementById("agentRole").value.trim(),
+					domain: document.getElementById("agentDomain").value.trim(),
+				};
+
+				try {
+					const response = await fetch(API_AGENT_ENDPOINT, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(agentData),
+					});
+					const result = await response.json();
+					updateOutput("Agent Created: " + JSON.stringify(result));
+				} catch (error) {
+					console.error("Error creating agent:", error);
+					updateOutput("Error creating agent. See console for details.");
+				}
+			});
+
+			// Handle Task form submission
+			document.getElementById("taskForm").addEventListener("submit", async function (e) {
+				e.preventDefault();
+				const taskData = {
+					title: document.getElementById("taskTitle").value.trim(),
+					description: document.getElementById("taskDescription").value.trim(),
+					access: document.getElementById("taskAccessLevel").value,
+				};
+
+				try {
+					const response = await fetch(API_TASK_ENDPOINT, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(taskData),
+					});
+					const result = await response.json();
+					updateOutput("Task Created: " + JSON.stringify(result));
+				} catch (error) {
+					console.error("Error creating task:", error);
+					updateOutput("Error creating task. See console for details.");
+				}
+			});
+		</script>
+	</body>
+</html>
+
+
+
+
+
+
+
+
